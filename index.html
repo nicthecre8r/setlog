@@ -125,6 +125,10 @@ details.rt > .stack{margin-top:10px}
 .rt summary::-webkit-details-marker{display:none}
 .rt summary::after{content:'Edit';font-size:14px;color:var(--accent)}
 .rt[open] summary::after{content:'Done'}
+.clock{font-family:var(--display);font-size:64px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums;line-height:1;padding-top:6px}
+.field input{text-transform:none;letter-spacing:0;color:var(--ink);font-size:16px}
+#timerBanner{background:var(--accent);color:var(--on-accent)}
+#timerBanner button{background:transparent;color:inherit;border-color:currentColor}
 .daynav{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;text-align:center;gap:8px}
 .daynav h2{font-size:clamp(21px,5.6vw,26px)}
 .daynav button{padding:0;font-size:22px}
@@ -186,6 +190,7 @@ details.rt > .stack{margin-top:10px}
     <button id="clearEx" type="button">Clear examples</button>
   </div>
   <div class="banner" id="nostore" hidden><span>This browser isn't saving data right now. Export before you close the page.</span></div>
+  <div class="banner" id="timerBanner" hidden role="status"><span id="timerBannerTxt"></span><button type="button" class="small" id="timerOpen">Open</button></div>
 
   <section id="view-log" class="wrap">
     <div class="stack">
@@ -205,6 +210,7 @@ details.rt > .stack{margin-top:10px}
       <div class="row"><div class="grow"><h2 id="exName"></h2><p class="target" id="target"></p><p class="muted" id="lastTime"></p></div>
         <div class="stack" style="align-items:flex-end;flex:none"><div class="seg" id="exUnit" aria-label="Unit for this exercise"><button type="button" data-unit="lb">lb</button><button type="button" data-unit="kg">kg</button></div>
         <button type="button" class="small" id="swapBtn" hidden>⇄ Swap</button></div></div>
+      <div class="stack" id="liftUI">
       <div class="steppers">
         <div class="stepper"><label for="weight" id="weightLbl">Weight</label>
           <div class="ctl"><button type="button" data-step="weight" data-dir="-1" aria-label="Less weight">−</button>
@@ -218,6 +224,29 @@ details.rt > .stack{margin-top:10px}
       <p class="muted" id="plates"></p>
       <input id="note" type="text" placeholder="Note (optional)" autocomplete="off" aria-label="Note">
       <button class="primary" id="logBtn" type="button">Log set</button>
+      </div>
+      <div class="stack" id="timedUI" hidden>
+        <div class="clock" id="clock" aria-live="off">0:00</div>
+        <p class="muted" id="clockSub" style="text-align:center"></p>
+        <div class="row">
+          <button class="primary" id="tStart" type="button">Start</button>
+          <button class="grow" id="tPause" type="button" hidden>Pause</button>
+          <button class="primary grow" id="tFinish" type="button" hidden style="width:auto">Finish</button>
+        </div>
+        <button type="button" class="quiet small" id="tManual" style="align-self:center">Enter one without the timer</button>
+        <div class="stack" id="tSave" hidden>
+          <div class="row">
+            <label class="field" for="tMin" style="min-width:0"><span>Minutes</span><input id="tMin" type="number" inputmode="numeric" min="0" step="1"></label>
+            <label class="field" for="tSec" style="min-width:0"><span>Seconds</span><input id="tSec" type="number" inputmode="numeric" min="0" max="59" step="1"></label>
+          </div>
+          <div class="row">
+            <label class="field" for="tDist" style="min-width:0"><span>Distance (optional)</span><input id="tDist" type="number" inputmode="decimal" min="0" step="any"></label>
+            <div class="seg" id="distSeg" style="align-self:flex-end" aria-label="Distance unit"><button type="button" data-du="mi">mi</button><button type="button" data-du="km">km</button></div>
+          </div>
+          <input id="tNote" type="text" placeholder="Note (optional)" autocomplete="off" aria-label="Note">
+          <div class="row"><button class="grow danger" id="tDiscard" type="button">Discard</button><button class="primary grow" id="tSaveBtn" type="button" style="width:auto">Save</button></div>
+        </div>
+      </div>
     </div>
     <form class="row" id="addEx">
       <input class="grow" id="newEx" type="text" list="exlist" placeholder="Log a different exercise" autocomplete="off" aria-label="Find or add an exercise">
@@ -355,6 +384,19 @@ const DEFAULT_DAYS=[
    alts:[[],[],[],[],['Cable lateral raise'],['Seated DB shoulder press'],[],[]]}
 ];
 const TYPE_ORDER=['Mobility','Plyometrics','Power','Strength','Hypertrophy','Cardio'];
+// Walks and runs are timed: they record a duration (and optional distance) instead of weight and reps
+['Walk','Run'].forEach(n=>{LIB[n]={name:n,day:'',type:'Cardio',full:[],short:[],timed:true}});
+const isTimed=ex=>!!(ex&&LIB[ex]&&LIB[ex].timed);
+// Plate math only for barbell lifts: library lifts by name, new exercises by keywords
+const BARBELL=new Set(['Barbell hang power clean','Barbell push press','Back squat','Flat barbell bench press','Deadlift','Romanian deadlift','Pendlay row']);
+function isBarbell(ex){
+  if(!ex)return false;if(BARBELL.has(ex))return true;
+  if(/dumbbell|\bdb\b|kettlebell|cable|machine|trap ?bar|ez[- ]?bar|smith|landmine|band/i.test(ex))return false;
+  return /barbell|bench press|back squat|front squat|overhead press|military press|deadlift|pendlay|power clean|hang clean|snatch|push press|good morning|hip thrust|bent[- ]over row/i.test(ex);
+}
+const fmtDur=sec=>{sec=Math.max(0,Math.round(sec));const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60;return (h?h+':'+pad(m):m)+':'+pad(s)};
+const fmtDurFull=sec=>{sec=Math.round(sec);return Math.floor(sec/3600)+':'+pad(Math.floor(sec%3600/60))+':'+pad(sec%60)};
+const elapsedOf=t=>Math.max(0,((t.pausedAt||Date.now())-t.start-t.paused)/1000);
 const isShortDay=d=>((state.session&&state.session[d])||state.defaultSession||'full')==='short';
 function targetFor(ex,d){const t=LIB[ex];if(!t)return [];return (isShortDay(d)&&t.short.length)||!t.full.length?t.short:t.full}
 function doneSet(d){ // exercises with all their target sets logged on day d
@@ -432,6 +474,8 @@ function restoreDefaultDays(){
     if(i>=0)state.routines[i]=copy;else if(state.routines.length<5)state.routines.push(copy);
   });
 }
+['Walk','Run'].forEach(n=>{if(!state.exercises.includes(n))state.exercises.push(n)});
+state.distUnit=state.distUnit||'mi';
 if(!state.library3){ // Workout Log defaults: 8-exercise days, short sessions by default
   Object.keys(state.short||{}).forEach(d=>{if(state.short[d])state.session[d]='short'});
   delete state.short;
@@ -458,7 +502,13 @@ function prIds(){ // first set to reach each exercise's best weight; bodyweight 
   const out=new Set();Object.keys(id).forEach(ex=>{const s=state.sets.find(x=>x.id===id[ex]);if(s.date!==first[ex])out.add(s.id)});
   return out;
 }
-const label=s=>(s.weight>0?num(s.weight)+' '+s.unit+' × ':'BW × ')+s.reps;
+function label(s){
+  if(s.duration!=null){ // timed: 32:10 · 1.8 mi · 17:52/mi
+    const pace=s.distance>0?' · '+fmtDur(s.duration/s.distance)+'/'+s.distUnit:'';
+    return fmtDur(s.duration)+(s.distance>0?' · '+num(s.distance)+' '+s.distUnit+pace:'');
+  }
+  return (s.weight>0?num(s.weight)+' '+s.unit+' × ':'BW × ')+s.reps;
+}
 
 function plateText(w,unit){
   const bar=unit==='kg'?20:45, plates=unit==='kg'?[25,20,15,10,5,2.5,1.25]:[45,35,25,10,5,2.5];
@@ -478,11 +528,40 @@ function selectExercise(ex){
   $('weight').value=last?num(conv(last.weight,last.unit,u)):(bw?0:(u==='kg'?20:45));
   const tg=targetFor(ex,logDate),n=state.sets.filter(s=>s.date===logDate&&s.exercise===ex).length;
   $('reps').value=tg.length?tg[Math.min(n,tg.length-1)]:(last?last.reps:5);
-  $('note').value='';
+  $('note').value='';manualOpen=false;
   renderLog();
 }
 function updatePlates(){
-  $('plates').textContent=plateText(parseFloat($('weight').value)||0,unitOf(current));
+  const w=parseFloat($('weight').value)||0;
+  $('plates').textContent=!(w>0)?'Bodyweight set':isBarbell(current)?plateText(w,unitOf(current)):'';
+}
+// ---- walk / run timer
+let manualOpen=false;
+function renderTimed(){
+  const t=state.timer,mine=t&&t.exercise===current,other=t&&!mine;
+  const finished=mine&&t.finished,running=mine&&!t.finished;
+  const noun=(current||'').toLowerCase();
+  $('clock').textContent=fmtDur(mine?elapsedOf(t):0);
+  $('clockSub').textContent=running?(t.pausedAt?'Paused':'Started '+new Date(t.start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'. Keeps counting if you lock your phone.')
+    :finished?'Add a distance if you know it, then save.'
+    :other?'Your '+t.exercise.toLowerCase()+' is still running. Finish it first.'
+    :logDate!==TODAY?'The timer is for today. You can still enter one for this day.':'';
+  const canStart=!t&&logDate===TODAY&&!manualOpen;
+  $('tStart').hidden=!canStart;$('tStart').textContent='Start '+noun;
+  $('tPause').hidden=!running;$('tPause').textContent=running&&t.pausedAt?'Resume':'Pause';
+  $('tFinish').hidden=!running;
+  $('tManual').hidden=!!mine||manualOpen||logDate>TODAY;
+  $('tSave').hidden=!(finished||manualOpen);
+  $('tSaveBtn').textContent='Save '+noun;
+  $('distSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.du===state.distUnit));
+}
+function fillSave(sec){$('tMin').value=sec==null?'':Math.floor(sec/60);$('tSec').value=sec==null?'':Math.round(sec%60);$('tDist').value='';$('tNote').value=''}
+function tickTimer(){
+  const t=state.timer;
+  $('timerBanner').hidden=!t||(tab==='log'&&current===t.exercise&&logDate===t.date);
+  if(!t)return;
+  $('timerBannerTxt').textContent=t.exercise+(t.finished?' finished, not saved yet':t.pausedAt?' paused at '+fmtDur(elapsedOf(t)):' running · '+fmtDur(elapsedOf(t)));
+  if(tab==='log'&&current===t.exercise&&!t.finished)$('clock').textContent=fmtDur(elapsedOf(t));
 }
 function renderLog(){
   const recency={};sorted().forEach(s=>recency[s.exercise]=s.ts);
@@ -506,13 +585,16 @@ function renderLog(){
   $('logBtn').disabled=!current||future;
   $('logBtn').textContent=future?'Planned for later':'Log set';
   $('weightLbl').textContent='Weight ('+unitOf(current)+')';
-  $('exUnit').hidden=!current;
+  const timed=isTimed(current);
+  $('exUnit').hidden=!current||timed;
+  $('liftUI').hidden=timed;$('timedUI').hidden=!timed;
+  if(timed)renderTimed();
   $('exUnit').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.unit===unitOf(current)));
   let lt='';
   if(current){
     const prev=sorted().filter(s=>s.exercise===current&&s.date<logDate);
     if(prev.length){const d=prev[prev.length-1].date;const day=prev.filter(s=>s.date===d);
-      lt='Last time, '+fmtDay(d)+': '+(day[0].weight>0?num(day[0].weight)+' '+day[0].unit+' × ':'BW × ')+day.map(s=>s.reps).join(', ')}
+      lt='Last time, '+fmtDay(d)+': '+(timed?day.map(label).join(', '):(day[0].weight>0?num(day[0].weight)+' '+day[0].unit+' × ':'BW × ')+day.map(s=>s.reps).join(', '))}
     else lt='First time logging this one.';
   }
   $('lastTime').textContent=lt;
@@ -589,13 +671,15 @@ function renderPlan(){
   $('cal').innerHTML=html;
 }
 
-const COLS=['Date','Workout','Session','Exercise','Set','Weight','Unit','Reps','Volume','Notes'];
+const COLS=['Date','Workout','Session','Exercise','Set','Weight','Unit','Reps','Volume','Duration','Distance','Distance unit','Notes'];
 function rows(){
   const n={},t=state.exportUnit;
   return sorted().filter(s=>!skipped.has(s.date)).map(s=>{const k=s.date+'|'+s.exercise;n[k]=(n[k]||0)+1;
     const u=t==='asis'?s.unit:t,w=conv(s.weight,s.unit,u);
     const rt=plannedFor(s.date);
-    return [s.date,rt?rt.name:'',rt?(isShortDay(s.date)?'Short':'Full'):(s.short?'Short':''),s.exercise,n[k],w,u,s.reps,Math.round(w*s.reps*100)/100,s.note||'']});
+    const head=[s.date,rt?rt.name:'',rt?(isShortDay(s.date)?'Short':'Full'):(s.short?'Short':''),s.exercise,n[k]];
+    if(s.duration!=null)return head.concat(['','','','',fmtDurFull(s.duration),s.distance>0?s.distance:'',s.distance>0?s.distUnit:'',s.note||'']);
+    return head.concat([w,u,s.reps,Math.round(w*s.reps*100)/100,'','','',s.note||''])});
 }
 const safeText=v=>typeof v==='string'&&/^[=+\-@]/.test(v)?"'"+v:v; // keep spreadsheets from running a note as a formula
 function toDelimited(sep){
@@ -625,6 +709,7 @@ function render(){
   ['log','plan','history','export'].forEach(t=>{$('view-'+t).hidden=t!==tab});
   document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab===tab));
   if(tab==='log')renderLog();else if(tab==='plan')renderPlan();else if(tab==='history')renderHistory();else renderExport();
+  tickTimer();
 }
 // Undo: take a snapshot before a change, and the next toast offers to put it back
 function checkpoint(){undoSnap=JSON.stringify(state)}
@@ -649,6 +734,8 @@ const HELP=`
 <details><summary>Short and full sessions</summary><p>Short sessions use fewer sets per exercise. Switch one day on <b>Log</b>, or change the default in <b>Settings</b>.</p></details>
 <details><summary>Plan ahead and deload weeks</summary><p>Quick schedule fills up to 16 weeks and can make every 4th week a deload. To change single dates, pick a workout day on <b>Plan</b> and tap dates on the calendar. The Deload switch at the end of each week turns it into a rest week; its schedule comes back if you switch it off.</p></details>
 <details><summary>Train on a different day</summary><p>On <b>Log</b>, pick a workout under <b>Start a workout on this day</b>, or tap <b>Change workout</b> to switch the planned one. Use the arrows next to the date to fill in a past day.</p></details>
+<details><summary>Walks and runs</summary><p>Pick <b>Walk</b> or <b>Run</b> on <b>Log</b> (search for it, or add it to a workout day) and tap <b>Start</b>. Pause if you need to, then tap <b>Finish</b>, add a distance if you know it, and save. The timer keeps counting if you lock your phone or close the app; a bar at the top shows it from any tab. To record one you didn't time, tap <b>Enter one without the timer</b>.</p></details>
+<details><summary>Plate math</summary><p>Barbell lifts show which plates to load on each side of a 45 lb (20 kg) bar. Other exercises don't.</p></details>
 <details><summary>Fix a mistake</summary><p>Most changes show <b>Undo</b> at the top of the screen for a few seconds. To remove one set, tap × next to it under Logged sets.</p></details>
 <details><summary>Export and back up</summary><p>On <b>Export</b>, pick workouts and save an Excel or CSV file, or copy rows to paste into Google Sheets. On iPhone, choose <b>Save to Files</b> in the share sheet.</p></details>
 <details><summary>Where your data lives</summary><p>Everything stays in this browser on this device; nothing is uploaded. Deleting the home-screen app or clearing Safari's website data deletes it, so export regularly.</p></details>
@@ -867,15 +954,47 @@ async function saveFile(filename,data){
 $('csvBtn').addEventListener('click',()=>saveFile('setlog-'+TODAY+'.csv','﻿'+toDelimited(',')));
 $('xlsxBtn').addEventListener('click',()=>{
   const ws=XLSX.utils.aoa_to_sheet([COLS].concat(rows().map(r=>r.map(safeText))));
-  ws['!cols']=[{wch:11},{wch:16},{wch:8},{wch:26},{wch:5},{wch:8},{wch:5},{wch:6},{wch:9},{wch:28}];
+  ws['!cols']=[{wch:11},{wch:16},{wch:8},{wch:26},{wch:5},{wch:8},{wch:5},{wch:6},{wch:9},{wch:9},{wch:9},{wch:8},{wch:28}];
   const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Log');
   saveFile('setlog-'+TODAY+'.xlsx',XLSX.write(wb,{type:'array',bookType:'xlsx'}))});
 $('csvBtn').hidden=false;$('xlsxBtn').hidden=typeof XLSX==='undefined';
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 
+// ---- walk / run timer controls (the timer is a saved start time, so it survives locking or closing the app)
+$('tStart').addEventListener('click',()=>{
+  if(state.timer||!current)return;
+  state.timer={exercise:current,date:logDate,start:Date.now(),paused:0,pausedAt:null,finished:false};
+  save();renderLog();tickTimer();
+  try{navigator.wakeLock&&navigator.wakeLock.request('screen').catch(()=>{})}catch(e){}
+});
+$('tPause').addEventListener('click',()=>{const t=state.timer;if(!t)return;
+  if(t.pausedAt){t.paused+=Date.now()-t.pausedAt;t.pausedAt=null}else t.pausedAt=Date.now();
+  save();renderLog();tickTimer()});
+$('tFinish').addEventListener('click',()=>{const t=state.timer;if(!t)return;
+  if(!t.pausedAt)t.pausedAt=Date.now();t.finished=true;save();fillSave(elapsedOf(t));renderLog();tickTimer()});
+$('tManual').addEventListener('click',()=>{manualOpen=true;fillSave(null);renderLog();$('tMin').focus()});
+$('distSeg').addEventListener('click',e=>{const b=e.target.closest('[data-du]');if(b){state.distUnit=b.dataset.du;save();renderTimed()}});
+$('tSaveBtn').addEventListener('click',()=>{
+  const sec=(parseInt($('tMin').value,10)||0)*60+(parseInt($('tSec').value,10)||0);
+  if(sec<=0){toast('Enter how long it took, in minutes and seconds.',false);$('tMin').focus();return}
+  const t=state.timer,date=t&&t.exercise===current?t.date:logDate,dist=parseFloat($('tDist').value);
+  checkpoint();
+  state.sets.push({id:'s'+Date.now()+Math.random().toString(36).slice(2,6),ts:Date.now(),date,exercise:current,weight:0,unit:unitOf(current),reps:0,
+    duration:sec,distance:dist>0?dist:0,distUnit:state.distUnit,note:$('tNote').value.trim()});
+  if(t&&t.exercise===current)state.timer=null;
+  manualOpen=false;save();render();tickTimer();
+  toast('Saved '+current.toLowerCase()+' '+label(state.sets[state.sets.length-1]),true)});
+$('tDiscard').addEventListener('click',()=>{
+  const t=state.timer;
+  if(t&&t.exercise===current){checkpoint();state.timer=null;save();renderLog();tickTimer();toast('Discarded '+current.toLowerCase(),true)}
+  else{manualOpen=false;renderLog()}});
+$('timerOpen').addEventListener('click',()=>{const t=state.timer;if(!t)return;
+  tab='log';logDate=t.date;selectExercise(t.exercise);render();tickTimer();window.scrollTo(0,0)});
+
 // ---- rest clock: time since the last set today, while the page is open
 setInterval(()=>{
+  tickTimer();
   const t=sorted().filter(s=>s.date===TODAY&&!s.example).pop();
   const sec=t?Math.floor((Date.now()-t.ts)/1000):-1;
   $('rest').textContent=sec>=0&&sec<900?'Rest '+Math.floor(sec/60)+':'+pad(sec%60):'';
@@ -886,6 +1005,7 @@ const h=location.hash.slice(1);if(['log','plan','history','export'].includes(h))
 save();
 openDay(TODAY);
 render();
+if(state.timer){const t=state.timer;if(t.finished)fillSave(elapsedOf(t));tickTimer()}
 if(!state.helpSeen){state.helpSeen=true;save();openHelp()} // show Help once, on first open
 })();
 </script>
