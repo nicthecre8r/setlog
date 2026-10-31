@@ -1,5 +1,5 @@
 // Keeps Setlog working offline. Change CACHE (e.g. setlog-v2) to force every phone onto a new version.
-const CACHE = 'setlog-v5';
+const CACHE = 'setlog-v8';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './xlsx.full.min.js'];
 
 self.addEventListener('install', e => {

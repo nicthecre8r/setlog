@@ -8,52 +8,62 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Setlog">
-<meta name="theme-color" content="#e9ecf0" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1317" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F5F7FA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0C0E" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
 <style>
 html{-webkit-text-size-adjust:100%}
 body{margin:0}
 [hidden]{display:none!important}
 :root{padding-top:env(safe-area-inset-top,0px)}
-/* Layout: one phone-width column, entry card always first, thumb-reach tab bar at the bottom. */
+/* Layout: one phone-width column, entry card always first, thumb-reach tab bar at the bottom.
+   Color: single brand accent (Volt Citrus dark / Active Gold light) on high-contrast neutrals, 60-30-10.
+   Gold is a fill in light mode; text that would be accent uses --accent-ink (Obsidian) so it stays readable. */
 :root{
-  --bg:#e9ecf0; --surface:#ffffff; --sunk:#dfe3e9; --ink:#141a22; --muted:#56616f; --line:#cdd3db;
-  --accent:#1c4fc4; --on-accent:#ffffff; --pr:#f2c230; --on-pr:#2a2100; --danger:#b3261e;
-  --c1:#b8322a; --c2:#1c4fc4; --c3:#8a6500; --c4:#23794a; --c5:#6d3fb5; --on-c:#ffffff; --scrim:rgba(20,26,34,.45);
-  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
-  --body:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --bg:#F5F7FA;        /* Frost: canvas */
+  --surface:#FFFFFF;   /* White: cards */
+  --sunk:#EBEFF3;      /* between Frost and Mist: wells, steppers, banners */
+  --ink:#12161A;       /* Obsidian: primary text */
+  --muted:#5A6B7C;     /* Slate: secondary text, inactive */
+  --line:#E1E6EB;      /* Mist: dividers */
+  --accent:#B3C600;    /* Active Gold: interactive fills, active timers, PRs */
+  --on-accent:#12161A; --accent-ink:#12161A; --focus:#12161A;
+  --danger:#C62828; --scrim:rgba(18,22,26,.45);
+  --sans:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Source Serif 4","Source Serif Pro",Georgia,"Times New Roman",serif;
+  --body:var(--sans); --display:var(--serif);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0f1317; --surface:#191f27; --sunk:#232a34; --ink:#e9edf2; --muted:#98a3b1; --line:#303945;
-    --accent:#7ea6ff; --on-accent:#0b1530; --pr:#f2c230; --on-pr:#2a2100; --danger:#ff8a80; --c1:#ff8f85; --c2:#7ea6ff; --c3:#f2c230; --c4:#63d391; --c5:#bfa0ff; --on-c:#10141a; --scrim:rgba(0,0,0,.62); color-scheme:dark;
+    --bg:#0B0C0E; --surface:#14171C; --sunk:#1B1F26; --ink:#FFFFFF; --muted:#7A8B9E; --line:#222831;
+    --accent:#E6FF00; --on-accent:#0B0C0E; --accent-ink:#E6FF00; --focus:#E6FF00; --danger:#FF6B6B; --scrim:rgba(0,0,0,.66); color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0f1317; --surface:#191f27; --sunk:#232a34; --ink:#e9edf2; --muted:#98a3b1; --line:#303945;
-  --accent:#7ea6ff; --on-accent:#0b1530; --pr:#f2c230; --on-pr:#2a2100; --danger:#ff8a80; --c1:#ff8f85; --c2:#7ea6ff; --c3:#f2c230; --c4:#63d391; --c5:#bfa0ff; --on-c:#10141a; --scrim:rgba(0,0,0,.62); color-scheme:dark;
+  --bg:#0B0C0E; --surface:#14171C; --sunk:#1B1F26; --ink:#FFFFFF; --muted:#7A8B9E; --line:#222831;
+  --accent:#E6FF00; --on-accent:#0B0C0E; --accent-ink:#E6FF00; --focus:#E6FF00; --danger:#FF6B6B; --scrim:rgba(0,0,0,.66); color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.4;
   padding-inline:16px;padding-block:12px 96px}
 body{min-width:375px} /* iPhone 13 mini */
 .wrap{max-width:744px; /* iPad mini, portrait */margin-inline:auto;display:flex;flex-direction:column;gap:16px}
-h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:.01em}
-h1{font-size:28px;font-weight:700;text-transform:uppercase}
-h2{font-size:30px;font-weight:600;line-height:1.1}
-h3{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+h1,h2{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.005em}
+h3{font-family:var(--body);margin:0}
+h1{font-size:26px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+h2{font-size:28px;font-weight:700;line-height:1.1}
+h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
 p{margin:0}
 .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .muted{color:var(--muted);font-size:14px}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:10px;min-height:44px;padding:0 14px}
-button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-family:var(--display);
-  font-size:22px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;min-height:56px;width:100%}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-family:var(--body);
+  font-size:18px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;min-height:56px;width:100%}
 .quiet{background:transparent}
 .danger{color:var(--danger)}
 input[type=text],input[type=number]{background:var(--surface);border:1px solid var(--line);border-radius:10px;min-height:44px;padding:0 12px;min-width:0;width:100%}
@@ -69,7 +79,7 @@ input[type=text],input[type=number]{background:var(--surface);border:1px solid v
 .stepper label{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .stepper .ctl{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:4px}
 .stepper .ctl button{padding:0;font-size:22px;background:var(--sunk);border-color:transparent}
-.stepper input{font-family:var(--display);font-size:34px;font-weight:600;text-align:center;padding:0;min-height:56px;
+.stepper input{font-family:var(--body);font-size:34px;font-weight:700;text-align:center;padding:0;min-height:56px;
   font-variant-numeric:tabular-nums;background:var(--bg)}
 .list{display:flex;flex-direction:column;gap:14px}
 .group{display:flex;flex-direction:column;gap:6px}
@@ -79,10 +89,10 @@ input[type=text],input[type=number]{background:var(--surface);border:1px solid v
   padding:4px 4px 4px 10px;font-variant-numeric:tabular-nums;font-size:15px}
 .set.ro{padding:4px 10px}
 .set button{min-height:36px;width:36px;padding:0;border:0;background:transparent;color:var(--muted);font-size:18px;line-height:1}
-.pr{background:var(--pr);color:var(--on-pr);font-size:11px;font-weight:600;border-radius:4px;padding:1px 5px;letter-spacing:.05em}
+.pr{background:var(--accent);color:var(--on-accent);font-size:11px;font-weight:600;border-radius:4px;padding:1px 5px;letter-spacing:.05em}
 .day{border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:10px}
 .day header{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.day header b{font-family:var(--display);font-size:22px;font-weight:600}
+.day header b{font-family:var(--display);font-size:20px;font-weight:700}
 .tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 table{border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;width:100%}
 th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
@@ -92,7 +102,7 @@ tr:last-child td{border-bottom:0}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .seg button{border:0;border-radius:0;background:var(--surface)}
 .seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-button:disabled{opacity:.45;cursor:default}
+button:disabled,.primary:disabled{background:transparent;color:var(--muted);border-color:var(--line);cursor:default}
 .picks{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding-inline:12px}
 .picks label{display:flex;gap:12px;align-items:center;padding-block:8px;border-bottom:1px solid var(--line);cursor:pointer}
 .picks label:last-child{border-bottom:0}
@@ -100,7 +110,7 @@ button:disabled{opacity:.45;cursor:default}
 .picks b{font-weight:600}
 .target{font-size:15px;font-variant-numeric:tabular-nums;margin-top:2px}
 .target .tdone{color:var(--muted);text-decoration:line-through}
-.target .tnext{font-weight:600;color:var(--accent)}
+.target .tnext{font-weight:700;color:var(--accent-ink);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:3px}
 #sessSeg{align-self:center}
 .small{min-height:40px;padding:0 12px;font-size:14px}
 .top .hbtns{display:flex;gap:8px;align-items:center}
@@ -123,19 +133,26 @@ details.rt{display:block}
 details.rt > .stack{margin-top:10px}
 .rt summary{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer;list-style:none}
 .rt summary::-webkit-details-marker{display:none}
-.rt summary::after{content:'Edit';font-size:14px;color:var(--accent)}
+.rt summary::after{content:'Edit';font-size:14px;font-weight:600;color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:2px;text-underline-offset:3px}
 .rt[open] summary::after{content:'Done'}
-.clock{font-family:var(--display);font-size:64px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums;line-height:1;padding-top:6px}
+.clock{font-family:var(--body);font-size:64px;font-weight:700;text-align:center;font-variant-numeric:tabular-nums;line-height:1;padding-top:6px}
 .field input{text-transform:none;letter-spacing:0;color:var(--ink);font-size:16px}
 #timerBanner{background:var(--accent);color:var(--on-accent)}
+.wkrun{font-weight:700;background:var(--accent);color:var(--on-accent);border-radius:999px;padding:2px 10px;font-variant-numeric:tabular-nums}
+.clock.live{color:var(--accent-ink)}
+.go{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:700}
+#wkTxt{font-variant-numeric:tabular-nums}
+.vh{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none}
+.sumlist{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;line-height:1.45}
 #timerBanner button{background:transparent;color:inherit;border-color:currentColor}
 .daynav{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;text-align:center;gap:8px}
 .daynav h2{font-size:clamp(21px,5.6vw,26px)}
 .daynav button{padding:0;font-size:22px}
-.chips button.planned{border-color:var(--accent);border-width:2px}
-.badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:5px;font-size:12px;font-weight:600;color:var(--on-c);font-variant-numeric:tabular-nums;flex:none}
+#chips button:not(.planned){background:transparent;color:var(--muted)}
+#chips button:not(.planned)[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.badge{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:5px;font-size:12px;font-weight:700;background:var(--ink);color:var(--bg);font-variant-numeric:tabular-nums;flex:none}
 .badge.none{background:transparent}
-.c1{background:var(--c1)}.c2{background:var(--c2)}.c3{background:var(--c3)}.c4{background:var(--c4)}.c5{background:var(--c5)}
+.chips button[aria-pressed=true] .badge{background:var(--bg);color:var(--ink)}
 .rt{background:var(--surface);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .rt .row > .badge{min-width:28px;height:28px;font-size:15px}
 .rt .set{background:var(--bg)}
@@ -172,8 +189,8 @@ details.rt > .stack{margin-top:10px}
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);
   display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom,0px)}
 .tabs div{display:flex;width:100%;max-width:744px}
-.tabs button{flex:1;border:0;border-radius:0;background:transparent;min-height:56px;font-family:var(--display);
-  font-size:17px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tabs button{flex:1;border:0;border-radius:0;background:transparent;min-height:56px;font-family:var(--body);
+  font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
 .tabs button[aria-pressed=true]{color:var(--ink);box-shadow:inset 0 3px 0 var(--accent)}
 .toast{position:fixed;left:16px;right:16px;top:calc(10px + env(safe-area-inset-top,0px));z-index:30;display:flex;justify-content:center;pointer-events:none}
 .toast div{pointer-events:auto;background:var(--ink);color:var(--bg);border-radius:10px;padding:8px 8px 8px 14px;display:flex;gap:10px;align-items:center;max-width:520px;font-size:14px}
@@ -196,6 +213,7 @@ details.rt > .stack{margin-top:10px}
     <div class="stack">
       <div class="daynav"><button type="button" id="prevD" aria-label="Previous day">‹</button><h2 id="logDay"></h2><button type="button" id="nextD" aria-label="Next day">›</button></div>
       <p class="muted" id="planLine" style="text-align:center"></p>
+      <div class="row" id="wkRow" hidden style="justify-content:center;flex-wrap:wrap"><span id="wkTxt"></span><button type="button" class="small" id="wkFinish">Finish workout</button></div>
       <div class="row" style="justify-content:center;flex-wrap:wrap">
         <div class="seg" id="sessSeg" hidden aria-label="Session length"><button type="button" data-sess="full">Full</button><button type="button" data-sess="short">Short</button></div>
         <button type="button" class="small" id="changeDay" hidden>Change workout</button>
@@ -307,6 +325,12 @@ details.rt > .stack{margin-top:10px}
       <h3>Latest rows</h3>
       <div class="tablebox"><table id="preview"></table></div>
     </div>
+    <div class="stack">
+      <h3>Import history</h3>
+      <p class="muted">Load a Setlog export (Excel or CSV) or your Workout Log CSV from Notion. Sets already in Setlog are skipped, so importing the same file twice is safe.</p>
+      <button type="button" id="importBtn">Choose a file to import</button>
+      <input type="file" id="importFile" class="vh" tabindex="-1" aria-hidden="true" accept=".csv,.tsv,.txt,.xlsx,.xls,text/csv,text/plain">
+    </div>
   </section>
 </div>
 
@@ -314,7 +338,7 @@ details.rt > .stack{margin-top:10px}
   <button type="button" data-tab="log">Log</button>
   <button type="button" data-tab="plan">Plan</button>
   <button type="button" data-tab="history">History</button>
-  <button type="button" data-tab="export">Export</button>
+  <button type="button" data-tab="export">Data</button>
 </div></nav>
 <div class="toast" id="toast" hidden role="status"><div><span id="toastMsg"></span><button id="toastBtn" type="button">Undo</button></div></div>
 <div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div>
@@ -327,6 +351,8 @@ details.rt > .stack{margin-top:10px}
     <div class="seg" id="defSess"><button type="button" data-ds="full">Full</button><button type="button" data-ds="short">Short</button></div></div>
   <div class="row"><span class="grow">Default unit for new exercises</span>
     <div class="seg" id="unitSeg"><button type="button" data-unit="lb">lb</button><button type="button" data-unit="kg">kg</button></div></div>
+  <div class="row"><span class="grow">Bring in workouts from an exported file</span>
+    <button type="button" id="importBtn2">Import history</button></div>
   <p class="muted">Your data is stored in this browser on this device only. Export regularly as a backup.</p>
   <div class="row"><span class="grow">Delete every logged set. Your plan and exercises stay.</span>
     <button class="danger" id="eraseBtn" type="button">Erase all sets</button></div>
@@ -342,6 +368,7 @@ const pad=n=>String(n).padStart(2,'0');
 const dayStr=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return d};
 const fmtDay=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'})};
+const fmtDayY=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'})};
 const num=n=>String(Math.round(n*100)/100);
 const TODAY=dayStr(new Date());
 const LB_PER_KG=2.2046226;
@@ -466,7 +493,26 @@ if(!state.library2){
   });
   state.library2=true;
 }
-state.session=state.session||{};state.swaps=state.swaps||{};
+state.session=state.session||{};state.swaps=state.swaps||{};state.workouts=state.workouts||{};
+// ---- workout timer: the first set logged today starts it; finishing the last planned exercise stops it
+// A workout is {start, end, paused}: Stop sets end; Resume adds the stopped gap to paused and clears end.
+function wkDur(d){
+  const w=state.workouts[d];if(!w)return null;let end=w.end;
+  if(!end){if(d===TODAY)end=Date.now();else{const ts=state.sets.filter(s=>s.date===d&&s.duration==null).map(s=>s.ts);end=ts.length?Math.max(...ts):w.start}}
+  return Math.max(0,(end-w.start-(w.paused||0))/1000);
+}
+function noteWorkout(s){ // call after a lifting set is added; walks and runs never touch the workout duration
+  if(s.date!==TODAY||s.duration!=null)return {};
+  let w=state.workouts[s.date],started=false,finished=false;
+  if(!w){w=state.workouts[s.date]={start:s.ts,end:null,paused:0};started=true}
+  if(w.end)return {}; // stopped: stays stopped until you tap Resume
+  const rt=plannedFor(s.date);
+  if(rt){const done=doneSet(s.date),pl=rt.exercises.filter(e=>state.exercises.includes(e)&&!isTimed(e));
+    if(pl.length&&pl.every(e=>done.has(e))){w.end=s.ts;finished=true}}
+  return {started,finished};
+}
+const wkMsg=r=>r.finished?'. Workout done, duration '+fmtDur(wkDur(TODAY)):r.started?'. Workout duration started':'';
+function dropEmptyWorkouts(){Object.keys(state.workouts).forEach(d=>{if(!state.sets.some(s=>s.date===d))delete state.workouts[d]})}
 function restoreDefaultDays(){
   DEFAULT_DAYS.forEach(def=>{
     def.exercises.concat(...def.alts).forEach(e=>{if(!state.exercises.includes(e))state.exercises.push(e)});
@@ -535,6 +581,18 @@ function updatePlates(){
   const w=parseFloat($('weight').value)||0;
   $('plates').textContent=!(w>0)?'Bodyweight set':isBarbell(current)?plateText(w,unitOf(current)):'';
 }
+function renderWk(){
+  const w=state.workouts[logDate],today=logDate===TODAY;
+  // hidden on walk/run screens, and on other days that have no workout
+  $('wkRow').hidden=isTimed(current)||(!w&&!today);if($('wkRow').hidden)return;
+  const running=!!w&&!w.end&&today;
+  $('wkTxt').textContent=w?'Duration '+fmtDur(wkDur(logDate)):'Duration starts with your first set';
+  $('wkTxt').className=running?'wkrun':'muted';
+  $('wkFinish').hidden=!today;
+  $('wkFinish').textContent=!w?'Start workout':running?'Stop workout':'Resume workout';
+  $('wkFinish').setAttribute('aria-pressed',running);
+  $('wkFinish').classList.toggle('go',!running); // Start/Resume is the action to take; Stop stays neutral
+}
 // ---- walk / run timer
 let manualOpen=false;
 function renderTimed(){
@@ -542,6 +600,7 @@ function renderTimed(){
   const finished=mine&&t.finished,running=mine&&!t.finished;
   const noun=(current||'').toLowerCase();
   $('clock').textContent=fmtDur(mine?elapsedOf(t):0);
+  $('clock').classList.toggle('live',!!running&&!t.pausedAt);
   $('clockSub').textContent=running?(t.pausedAt?'Paused':'Started '+new Date(t.start).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})+'. Keeps counting if you lock your phone.')
     :finished?'Add a distance if you know it, then save.'
     :other?'Your '+t.exercise.toLowerCase()+' is still running. Finish it first.'
@@ -585,6 +644,7 @@ function renderLog(){
   $('logBtn').disabled=!current||future;
   $('logBtn').textContent=future?'Planned for later':'Log set';
   $('weightLbl').textContent='Weight ('+unitOf(current)+')';
+  renderWk();
   const timed=isTimed(current);
   $('exUnit').hidden=!current||timed;
   $('liftUI').hidden=timed;$('timedUI').hidden=!timed;
@@ -626,7 +686,7 @@ function renderHistory(){
   $('historyList').innerHTML=days.length?days.map(d=>{
     const sets=sorted().filter(s=>s.date===d);
     const vol=sets.reduce((a,s)=>a+conv(s.weight,s.unit,state.unit)*s.reps,0);
-    return '<div class="day"><header><b>'+esc(d===TODAY?'Today':fmtDay(d))+'</b><span class="muted">'+sets.length+' sets'+(vol?' · '+Math.round(vol).toLocaleString()+' '+state.unit+' volume':'')+'</span></header>'+groupHtml(sets,false,prs)+'</div>';
+    return '<div class="day"><header><b>'+esc((d===TODAY?'Today · ':'')+fmtDayY(d))+'</b><span class="muted">'+(wkDur(d)!=null?'Duration '+fmtDur(wkDur(d))+' · ':'')+sets.length+' sets'+(vol?' · '+Math.round(vol).toLocaleString()+' '+state.unit+' volume':'')+'</span></header>'+groupHtml(sets,false,prs)+'</div>';
   }).join(''):'<p class="muted">Your logged workouts will appear here, newest first.</p>';
 }
 
@@ -672,14 +732,22 @@ function renderPlan(){
 }
 
 const COLS=['Date','Workout','Session','Exercise','Set','Weight','Unit','Reps','Volume','Duration','Distance','Distance unit','Notes'];
+const TOTAL='Total workout'; // one row per day after its sets; its Duration is the whole workout
 function rows(){
-  const n={},t=state.exportUnit;
-  return sorted().filter(s=>!skipped.has(s.date)).map(s=>{const k=s.date+'|'+s.exercise;n[k]=(n[k]||0)+1;
+  const n={},t=state.exportUnit,out=[];
+  const meta=d=>{const rt=plannedFor(d);return [d,rt?rt.name:'',rt?(isShortDay(d)?'Short':'Full'):(state.sets.some(s=>s.date===d&&s.short)?'Short':'')]};
+  const total=d=>{const dur=wkDur(d);if(dur>0)out.push(meta(d).concat([TOTAL,'','','','','',fmtDurFull(dur),'','','']))};
+  let prev=null;
+  sorted().filter(s=>!skipped.has(s.date)).forEach(s=>{
+    if(prev&&prev!==s.date)total(prev);prev=s.date;
+    const k=s.date+'|'+s.exercise;n[k]=(n[k]||0)+1;
     const u=t==='asis'?s.unit:t,w=conv(s.weight,s.unit,u);
-    const rt=plannedFor(s.date);
-    const head=[s.date,rt?rt.name:'',rt?(isShortDay(s.date)?'Short':'Full'):(s.short?'Short':''),s.exercise,n[k]];
-    if(s.duration!=null)return head.concat(['','','','',fmtDurFull(s.duration),s.distance>0?s.distance:'',s.distance>0?s.distUnit:'',s.note||'']);
-    return head.concat([w,u,s.reps,Math.round(w*s.reps*100)/100,'','','',s.note||''])});
+    const head=meta(s.date).concat([s.exercise,n[k]]);
+    if(s.duration!=null)out.push(head.concat(['','','','',fmtDurFull(s.duration),s.distance>0?s.distance:'',s.distance>0?s.distUnit:'',s.note||'']));
+    else out.push(head.concat([w,u,s.reps,Math.round(w*s.reps*100)/100,'','','',s.note||'']));
+  });
+  if(prev)total(prev);
+  return out;
 }
 const safeText=v=>typeof v==='string'&&/^[=+\-@]/.test(v)?"'"+v:v; // keep spreadsheets from running a note as a formula
 function toDelimited(sep){
@@ -692,13 +760,14 @@ function renderExport(){
   const picked=days.filter(d=>!skipped.has(d)).length,r=rows();
   $('picks').innerHTML=days.length?days.map(d=>{
     const sets=state.sets.filter(s=>s.date===d),exs=[...new Set(sets.map(s=>s.exercise))];
-    return '<label><input type="checkbox" id="pick-'+d+'" data-day="'+d+'"'+(skipped.has(d)?'':' checked')+'><span><b>'+esc(d===TODAY?'Today':fmtDay(d))+'</b><br><span class="muted">'+sets.length+' sets · '+esc(exs.join(', '))+'</span></span></label>';
+    return '<label><input type="checkbox" id="pick-'+d+'" data-day="'+d+'"'+(skipped.has(d)?'':' checked')+'><span><b>'+esc((d===TODAY?'Today · ':'')+fmtDayY(d))+'</b><br><span class="muted">'+(wkDur(d)!=null?'Duration '+fmtDur(wkDur(d))+' · ':'')+sets.length+' sets · '+esc(exs.join(', '))+'</span></span></label>';
   }).join(''):'<p class="muted" style="padding-block:10px">No workouts logged yet.</p>';
   $('pickAll').textContent=picked?'Select none':'Select all';
   $('pickAll').hidden=!days.length;
   $('convSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.conv===state.exportUnit));
   const t=state.exportUnit;
-  $('exportSummary').textContent=r.length?'Exporting '+r.length+' sets from '+picked+' of '+days.length+' workout'+(days.length===1?'':'s')+(t==='asis'?', weights as logged.':', all weights in '+t+'.'):'Select at least one workout to export.';
+  const nSets=r.filter(x=>x[3]!==TOTAL).length;
+  $('exportSummary').textContent=r.length?'Exporting '+nSets+' sets from '+picked+' of '+days.length+' workout'+(days.length===1?'':'s')+(t==='asis'?', weights as logged.':', all weights in '+t+'.'):'Select at least one workout to export.';
   ['xlsxBtn','csvBtn','copyBtn'].forEach(id=>{$(id).disabled=!r.length});
   $('preview').innerHTML='<tr>'+COLS.map(c=>'<th>'+c+'</th>').join('')+'</tr>'+r.slice(-6).reverse().map(x=>'<tr>'+x.map(c=>'<td>'+esc(c)+'</td>').join('')+'</tr>').join('');
   $('unitSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.unit===state.unit));
@@ -737,7 +806,9 @@ const HELP=`
 <details><summary>Walks and runs</summary><p>Pick <b>Walk</b> or <b>Run</b> on <b>Log</b> (search for it, or add it to a workout day) and tap <b>Start</b>. Pause if you need to, then tap <b>Finish</b>, add a distance if you know it, and save. The timer keeps counting if you lock your phone or close the app; a bar at the top shows it from any tab. To record one you didn't time, tap <b>Enter one without the timer</b>.</p></details>
 <details><summary>Plate math</summary><p>Barbell lifts show which plates to load on each side of a 45 lb (20 kg) bar. Other exercises don't.</p></details>
 <details><summary>Fix a mistake</summary><p>Most changes show <b>Undo</b> at the top of the screen for a few seconds. To remove one set, tap × next to it under Logged sets.</p></details>
-<details><summary>Export and back up</summary><p>On <b>Export</b>, pick workouts and save an Excel or CSV file, or copy rows to paste into Google Sheets. On iPhone, choose <b>Save to Files</b> in the share sheet.</p></details>
+<details><summary>Workout duration</summary><p>Your workout's <b>Duration</b> shows under the date on <b>Log</b>. It starts by itself when you log the first set of the day, or tap <b>Start workout</b>. Tap <b>Stop workout</b> to stop it and <b>Resume workout</b> to carry on; the stopped time isn't counted. It also stops by itself once every exercise in the day's plan is done. Walks and runs keep their own duration and don't start or stop the workout. History shows each workout's duration, and exports add a <b>Total workout</b> row per day with it in the Duration column.</p></details>
+<details><summary>Import history</summary><p>On <b>Data</b>, tap <b>Choose a file to import</b>. Setlog reads its own Excel or CSV exports and the Workout Log CSV from Notion. You'll see a summary before anything is added, and sets already in Setlog are skipped. If Notion gives you a .zip, tap it in the Files app to unzip it first, then pick the CSV inside.</p></details>
+<details><summary>Export and back up</summary><p>On <b>Data</b>, pick workouts and save an Excel or CSV file, or copy rows to paste into Google Sheets. On iPhone, choose <b>Save to Files</b> in the share sheet.</p></details>
 <details><summary>Where your data lives</summary><p>Everything stays in this browser on this device; nothing is uploaded. Deleting the home-screen app or clearing Safari's website data deletes it, so export regularly.</p></details>
 <details><summary>Install on iPhone</summary><p>Open Setlog in Safari, tap Share, then <b>Add to Home Screen</b>. It then opens full screen and works offline.</p></details>`;
 function openHelp(){openSheet('Help',HELP)}
@@ -801,7 +872,7 @@ $('logBtn').addEventListener('click',()=>{
   if(!current||logDate>TODAY)return;
   const w=Math.max(0,parseFloat($('weight').value)||0),r=Math.max(1,Math.round(parseFloat($('reps').value)||0));
   const s={id:'s'+Date.now()+Math.random().toString(36).slice(2,6),ts:Date.now(),date:logDate,exercise:current,weight:w,unit:unitOf(current),reps:r,note:$('note').value.trim()};
-  checkpoint();state.sets.push(s);$('note').value='';save();
+  checkpoint();state.sets.push(s);const wk=noteWorkout(s);$('note').value='';save();
   const tg=targetFor(current,logDate),n=state.sets.filter(x=>x.date===logDate&&x.exercise===current).length;
   if(tg.length)$('reps').value=tg[Math.min(n,tg.length-1)];
   // when the planned sets for this exercise are done, move on to the next one in the plan
@@ -809,7 +880,14 @@ $('logBtn').addEventListener('click',()=>{
   const nx=rt&&done.has(current)?rt.exercises.find(e=>state.exercises.includes(e)&&!done.has(e)):null;
   if(nx)selectExercise(nx);
   render();
-  toast('Logged '+s.exercise+' '+label(s)+(nx?'. Next: '+nx:''),true)});
+  toast('Logged '+s.exercise+' '+label(s)+(wk.finished?'':nx?'. Next: '+nx:'')+wkMsg(wk),true)});
+$('wkFinish').addEventListener('click',()=>{ // one button: Start → Stop → Resume
+  if(logDate!==TODAY||isTimed(current))return;
+  checkpoint();const now=Date.now();let w=state.workouts[logDate],msg;
+  if(!w){state.workouts[logDate]={start:now,end:null,paused:0};msg='Workout started'}
+  else if(!w.end){w.end=now;msg='Workout stopped at '+fmtDur(wkDur(logDate))}
+  else{w.paused=(w.paused||0)+(now-w.end);w.end=null;msg='Workout resumed at '+fmtDur(wkDur(logDate))}
+  save();renderLog();toast(msg,true)});
 $('sessSeg').addEventListener('click',e=>{const b=e.target.closest('[data-sess]');if(!b)return;
   const v=b.dataset.sess;
   if(v===(state.defaultSession||'full'))delete state.session[logDate];else state.session[logDate]=v;
@@ -820,7 +898,7 @@ $('toastBtn').addEventListener('click',()=>{
   $('toast').hidden=true});
 $('todayList').addEventListener('click',e=>{const b=e.target.closest('[data-del]');if(!b)return;
   const s=state.sets.find(x=>x.id===b.dataset.del);checkpoint();
-  state.sets=state.sets.filter(x=>x.id!==b.dataset.del);save();render();toast('Deleted '+s.exercise+' '+label(s),true)});
+  state.sets=state.sets.filter(x=>x.id!==b.dataset.del);dropEmptyWorkouts();save();render();toast('Deleted '+s.exercise+' '+label(s),true)});
 $('dayPickBtns').addEventListener('click',e=>{const b=e.target.closest('[data-start]');if(!b)return;
   checkpoint();const id=b.dataset.start;
   if(id)state.plan[logDate]=id;else delete state.plan[logDate];
@@ -850,6 +928,7 @@ document.querySelectorAll('.sheet').forEach(sh=>{
   sh.addEventListener('click',e=>{
     if(e.target===sh||e.target.closest('[data-close]'))return closeSheets();
     const p=e.target.closest('[data-pick]');if(p&&swapCtx)return applySwap(p.dataset.pick);
+    if(e.target.closest('[data-importgo]'))return doImport();
     const sc=e.target.closest('[data-scope]');
     if(sc&&swapCtx){swapCtx.scope=sc.dataset.scope;$('swapScope').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b===sc))}
   });
@@ -927,7 +1006,7 @@ $('convSeg').addEventListener('click',e=>{const b=e.target.closest('[data-conv]'
 let eraseArmed=false;
 $('eraseBtn').addEventListener('click',()=>{
   if(!eraseArmed){eraseArmed=true;$('eraseBtn').textContent='Tap again to erase';setTimeout(()=>{eraseArmed=false;$('eraseBtn').textContent='Erase all sets'},4000);return}
-  checkpoint();state=Object.assign({},state,{sets:[]});eraseArmed=false;$('eraseBtn').textContent='Erase all sets';save();closeSheets();render();toast('All sets erased',true)});
+  checkpoint();state=Object.assign({},state,{sets:[],workouts:{}});eraseArmed=false;$('eraseBtn').textContent='Erase all sets';save();closeSheets();render();toast('All sets erased',true)});
 $('copyBtn').addEventListener('click',()=>{
   const text=toDelimited('\t');
   (navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).then(
@@ -992,9 +1071,147 @@ $('tDiscard').addEventListener('click',()=>{
 $('timerOpen').addEventListener('click',()=>{const t=state.timer;if(!t)return;
   tab='log';logDate=t.date;selectExercise(t.exercise);render();tickTimer();window.scrollTo(0,0)});
 
+// ---- import history: Setlog exports (CSV/XLSX) and the Notion Workout Log CSV
+function parseCSV(text){
+  text=text.replace(/^﻿/,'');
+  const first=text.split('\n')[0],sep=(first.split('\t').length>first.split(',').length)?'\t':',';
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+    else if(c==='"')q=true;else if(c===sep){row.push(f);f=''}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(f);rows.push(row);row=[];f=''}
+    else f+=c}
+  if(f!==''||row.length){row.push(f);rows.push(row)}
+  return rows;
+}
+async function readRows(file){
+  if(/\.xlsx?$/i.test(file.name)){
+    if(typeof XLSX==='undefined')throw new Error('Excel files can’t be read right now. Export the file as CSV and try again.');
+    const wb=XLSX.read(await file.arrayBuffer(),{type:'array'});
+    const ws=wb.Sheets.Log||wb.Sheets[wb.SheetNames[0]];
+    return XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''});
+  }
+  return parseCSV(await file.text());
+}
+const normKey=h=>String(h).toLowerCase().replace(/[^a-z0-9]/g,'');
+const MONTHS=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+function parseDate(s){
+  s=String(s||'').trim();if(!s)return null;let m;
+  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)))return {date:m[1]+'-'+pad(+m[2])+'-'+pad(+m[3])};
+  if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/))){const y=+m[3]<100?2000+ +m[3]:+m[3];return {date:y+'-'+pad(+m[1])+'-'+pad(+m[2])}}
+  if((m=s.match(/^(?:[A-Za-z]+,\s*)?([A-Za-z]{3,9})\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:,?\s+(\d{4}))?/))){
+    const mo=MONTHS.indexOf(m[1].slice(0,3).toLowerCase());if(mo<0)return null;
+    if(m[3])return {date:m[3]+'-'+pad(mo+1)+'-'+pad(+m[2])};
+    let y=new Date().getFullYear(),d=y+'-'+pad(mo+1)+'-'+pad(+m[2]);
+    if(d>TODAY){y--;d=y+'-'+pad(mo+1)+'-'+pad(+m[2])} // no year given: the most recent one that isn't in the future
+    return {date:d,noYear:true};
+  }
+  const t=new Date(s);return isNaN(t)?null:{date:dayStr(t)};
+}
+function parseDur(s){
+  s=String(s||'').trim();if(!s)return 0;
+  if(s.includes(':'))return s.split(':').map(Number).reduce((a,b)=>a*60+(b||0),0);
+  return (parseFloat(s)||0)*60; // a bare number is minutes
+}
+const num0=v=>{const n=parseFloat(String(v).replace(/[^0-9.\-]/g,''));return isNaN(n)?null:n};
+function canonEx(raw){ // "Back squat (Short) (https://notion…)" → {name:'Back squat', short:true}
+  let s=String(raw).replace(/\s*\(https?:[^)]*\)/g,'').trim();
+  const short=/\s*\(short\)\s*$/i.test(s);s=s.replace(/\s*\(short\)\s*$/i,'').trim();
+  const have=state.exercises.find(e=>e.toLowerCase()===s.toLowerCase())||Object.keys(LIB).find(e=>e.toLowerCase()===s.toLowerCase());
+  return {name:have||s,short};
+}
+function routineByName(n){const m=String(n||'').match(/day\s*(\d+)/i),key=(m?'day '+m[1]:String(n||'')).toLowerCase().trim();
+  return key?state.routines.find(r=>r.name.toLowerCase()===key):null}
+function parseImport(rows){
+  const hi=rows.slice(0,8).findIndex(r=>r.some(c=>normKey(c)==='exercise'));
+  if(hi<0)throw new Error('This file has no Exercise column, so Setlog can’t tell what’s in it. Use a Setlog export or the Workout Log CSV.');
+  const H=rows[hi].map(normKey),col=n=>H.indexOf(n);
+  const out={sets:[],plan:{},session:{},wtime:{},noYear:false,bad:0};
+  const cE=col('exercise'),cD=col('date');
+  const setCols=[];H.forEach((h,i)=>{const m=h.match(/^set(\d+)reps$/);if(m)setCols.push({n:+m[1],reps:i})});
+  if(setCols.length){ // Notion Workout Log: one row per exercise, Set N Wt / Set N Reps columns, blank cells carry down
+    setCols.forEach(sc=>{const wi=H.findIndex(h=>new RegExp('^set'+sc.n+'(wt|weight)').test(h));sc.wt=wi;sc.unit=wi>=0&&/kg/.test(H[wi])?'kg':'lb'});
+    setCols.sort((a,b)=>a.n-b.n);
+    const cN=col('name');let curD=null,curN='';
+    rows.slice(hi+1).forEach(r=>{
+      if(cD>=0&&String(r[cD]||'').trim()){const p=parseDate(r[cD]);curD=p&&p.date;if(p&&p.noYear)out.noYear=true}
+      if(cN>=0&&String(r[cN]||'').trim())curN=r[cN];
+      if(!String(r[cE]||'').trim())return;
+      if(!curD){out.bad++;return}
+      const ex=canonEx(r[cE]);let lastW=0;
+      setCols.forEach(sc=>{const reps=num0(r[sc.reps]);
+        const w=sc.wt>=0?num0(r[sc.wt]):null;if(w!=null)lastW=w;
+        if(!(reps>0))return;
+        out.sets.push({date:curD,exercise:ex.name,weight:w!=null?w:lastW,unit:sc.unit,reps:Math.round(reps),note:''})});
+      const rt=routineByName(curN);if(rt)out.plan[curD]=rt.id;
+      if(ex.short)out.session[curD]='short';
+    });
+  }else{ // Setlog export: one row per set
+    if(cD<0)throw new Error('This file has no Date column. Use a Setlog export or the Workout Log CSV.');
+    const g=n=>col(n),cW=g('weight'),cU=g('unit'),cR=g('reps'),cDu=g('duration'),cDi=g('distance'),cDU=g('distanceunit'),cNo=g('notes'),cWo=g('workout'),cSe=g('session'),cWT=g('workouttime');
+    rows.slice(hi+1).forEach(r=>{
+      if(!String(r[cE]||'').trim())return;
+      const p=parseDate(r[cD]);if(!p){out.bad++;return}if(p.noYear)out.noYear=true;
+      const ex=canonEx(r[cE]),dur=cDu>=0?parseDur(r[cDu]):0,note=cNo>=0?String(r[cNo]||'').trim():'';
+      if(ex.name.toLowerCase()===TOTAL.toLowerCase()){if(dur>0)out.wtime[p.date]=dur;return} // workout duration row
+      if(dur>0){const di=cDi>=0?num0(r[cDi]):null;
+        out.sets.push({date:p.date,exercise:ex.name,weight:0,unit:state.unit,reps:0,duration:dur,distance:di>0?di:0,distUnit:cDU>=0&&/km/i.test(r[cDU])?'km':'mi',note})}
+      else{const reps=cR>=0?num0(r[cR]):null;if(!(reps>0)){out.bad++;return}
+        const w=cW>=0?num0(r[cW]):null;
+        out.sets.push({date:p.date,exercise:ex.name,weight:w>0?w:0,unit:cU>=0&&/kg/i.test(r[cU])?'kg':'lb',reps:Math.round(reps),note})}
+      const rt=cWo>=0&&routineByName(r[cWo]);if(rt)out.plan[p.date]=rt.id;
+      if(cSe>=0&&/short|full/i.test(r[cSe]))out.session[p.date]=/short/i.test(r[cSe])?'short':'full';
+      if(ex.short)out.session[p.date]='short';
+      const wt=cWT>=0?parseDur(r[cWT]):0;if(wt>0)out.wtime[p.date]=wt; // older exports had a Workout time column
+    });
+  }
+  // skip sets that are already in Setlog (same day, exercise, weight, reps or time)
+  const sig=s=>s.date+'|'+s.exercise.toLowerCase()+'|'+(s.duration?'t'+Math.round(s.duration):Math.round(conv(s.weight,s.unit,'lb'))+'x'+s.reps);
+  const have={};state.sets.forEach(s=>{const k=sig(s);have[k]=(have[k]||0)+1});
+  out.fresh=out.sets.filter(s=>{const k=sig(s);if(have[k]){have[k]--;return false}return true});
+  out.dupes=out.sets.length-out.fresh.length;
+  out.newEx=[...new Set(out.fresh.map(s=>s.exercise))].filter(e=>!state.exercises.some(x=>x.toLowerCase()===e.toLowerCase()));
+  return out;
+}
+let pendingImport=null;
+function startImport(){$('importFile').value='';$('importFile').click()}
+$('importBtn').addEventListener('click',startImport);
+$('importBtn2').addEventListener('click',()=>{closeSheets();startImport()});
+$('importFile').addEventListener('change',async()=>{
+  const f=$('importFile').files[0];if(!f)return;
+  try{
+    const o=parseImport(await readRows(f));pendingImport=o;
+    const days=[...new Set(o.fresh.map(s=>s.date))].sort();
+    const items=[];
+    if(o.fresh.length)items.push(o.fresh.length+' sets from '+days.length+' workout'+(days.length===1?'':'s')+', '+fmtDayY(days[0])+(days.length>1?' to '+fmtDayY(days[days.length-1]):''));
+    if(o.dupes)items.push(o.dupes+' set'+(o.dupes===1?' is':'s are')+' already in Setlog and will be skipped');
+    if(o.newEx.length)items.push('New exercise'+(o.newEx.length===1?'':'s')+' added: '+o.newEx.join(', '));
+    if(o.noYear&&o.fresh.length)items.push('The file’s dates have no year, so each was read as its most recent past date ('+[...new Set(days.map(d=>d.slice(0,4)))].join(', ')+')');
+    if(o.bad)items.push(o.bad+' row'+(o.bad===1?' was':'s were')+' unreadable and will be skipped');
+    openSheet('Import '+f.name,
+      '<ul class="sumlist">'+items.map(i=>'<li>'+esc(i)+'</li>').join('')+'</ul>'+
+      (o.fresh.length?'<div class="row"><button type="button" class="grow" data-close>Cancel</button><button type="button" class="primary grow" style="width:auto;font-size:18px" data-importgo>Import '+o.fresh.length+' sets</button></div>'
+        :'<p>Nothing new to import.</p>'));
+  }catch(err){pendingImport=null;toast(err&&err.message?err.message:'This file couldn’t be read. Try a CSV export.',false)}
+});
+function doImport(){
+  const o=pendingImport;if(!o)return;pendingImport=null;
+  checkpoint();
+  o.newEx.forEach(e=>state.exercises.push(e));
+  const per={};
+  o.fresh.forEach(s=>{const base=parseDay(s.date).getTime()+12*3600e3;per[s.date]=(per[s.date]||0)+1;
+    state.sets.push(Object.assign({id:'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,7),ts:base+per[s.date]*1000},s))});
+  Object.keys(o.plan).forEach(d=>{if(!state.plan[d])state.plan[d]=o.plan[d]});
+  Object.keys(o.session).forEach(d=>{if(!state.session[d]&&o.session[d]!==(state.defaultSession||'full'))state.session[d]=o.session[d]});
+  Object.keys(o.wtime).forEach(d=>{if(!state.workouts[d]){const st=parseDay(d).getTime()+12*3600e3;state.workouts[d]={start:st,end:st+o.wtime[d]*1000}}});
+  save();closeSheets();render();
+  toast('Imported '+o.fresh.length+' sets',true);
+}
+
 // ---- rest clock: time since the last set today, while the page is open
 setInterval(()=>{
   tickTimer();
+  const wr=state.workouts[logDate];if(tab==='log'&&wr&&!wr.end&&logDate===TODAY)renderWk();
   const t=sorted().filter(s=>s.date===TODAY&&!s.example).pop();
   const sec=t?Math.floor((Date.now()-t.ts)/1000):-1;
   $('rest').textContent=sec>=0&&sec<900?'Rest '+Math.floor(sec/60)+':'+pad(sec%60):'';
